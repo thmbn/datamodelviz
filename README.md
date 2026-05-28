@@ -66,6 +66,7 @@ Five FK relationships, including a composite PK on the junction table — exerci
 Background research lives in [`research/`](research/). Each file is a self-contained snapshot of a topic.
 
 - [Open-source relational data model visualization landscape](research/relational-data-model-viz-landscape.md) — the ERD-tool ecosystem (DrawDB, ChartDB, Liam, Azimutt, tbls, SchemaSpy, DBML, React Flow, …) organized by architectural pattern.
+- [Declarative visualization libraries](research/declarative-viz-libraries.md) — broader text-DSL / spec-driven diagram tools (Mermaid, D2, PlantUML, mingrammer/diagrams, ECharts, Vega, WaveDrom, Kroki, …) — the neighbors of what datamodelviz does.
 
 ## DBML notes
 
