@@ -1,0 +1,293 @@
+{
+  "nodes": [
+    {
+      "id": "comments",
+      "type": "text",
+      "x": 0,
+      "y": 0,
+      "width": 360,
+      "height": 298,
+      "text": "# comments\n\n| column | type | constraints |\n|---|---|---|\n| 🔑 **id** | INTEGER |  |\n| 🔗 post_id | INTEGER | not null |\n| 🔗 author_id | INTEGER | not null |\n| body | TEXT | not null |\n| created_at | TEXT | not null, default `CURRENT_TIMESTAMP` |\n",
+      "dmv": {
+        "kind": "table",
+        "table": {
+          "name": "comments",
+          "columns": [
+            {
+              "name": "id",
+              "type": "INTEGER",
+              "pk": true
+            },
+            {
+              "name": "post_id",
+              "type": "INTEGER",
+              "notNull": true
+            },
+            {
+              "name": "author_id",
+              "type": "INTEGER",
+              "notNull": true
+            },
+            {
+              "name": "body",
+              "type": "TEXT",
+              "notNull": true
+            },
+            {
+              "name": "created_at",
+              "type": "TEXT",
+              "notNull": true,
+              "default": "CURRENT_TIMESTAMP"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "post_tags",
+      "type": "text",
+      "x": 440,
+      "y": 0,
+      "width": 360,
+      "height": 214,
+      "text": "# post_tags\n\n| column | type | constraints |\n|---|---|---|\n| 🔑 🔗 **post_id** | INTEGER | not null |\n| 🔑 🔗 **tag_id** | INTEGER | not null |\n",
+      "dmv": {
+        "kind": "table",
+        "table": {
+          "name": "post_tags",
+          "columns": [
+            {
+              "name": "post_id",
+              "type": "INTEGER",
+              "notNull": true,
+              "pk": true
+            },
+            {
+              "name": "tag_id",
+              "type": "INTEGER",
+              "notNull": true,
+              "pk": true
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "posts",
+      "type": "text",
+      "x": 880,
+      "y": 0,
+      "width": 360,
+      "height": 326,
+      "text": "# posts\n\n| column | type | constraints |\n|---|---|---|\n| 🔑 **id** | INTEGER |  |\n| 🔗 author_id | INTEGER | not null |\n| title | TEXT | not null |\n| body | TEXT |  |\n| published_at | TEXT |  |\n| created_at | TEXT | not null, default `CURRENT_TIMESTAMP` |\n",
+      "dmv": {
+        "kind": "table",
+        "table": {
+          "name": "posts",
+          "columns": [
+            {
+              "name": "id",
+              "type": "INTEGER",
+              "pk": true
+            },
+            {
+              "name": "author_id",
+              "type": "INTEGER",
+              "notNull": true
+            },
+            {
+              "name": "title",
+              "type": "TEXT",
+              "notNull": true
+            },
+            {
+              "name": "body",
+              "type": "TEXT"
+            },
+            {
+              "name": "published_at",
+              "type": "TEXT"
+            },
+            {
+              "name": "created_at",
+              "type": "TEXT",
+              "notNull": true,
+              "default": "CURRENT_TIMESTAMP"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "tags",
+      "type": "text",
+      "x": 0,
+      "y": 378,
+      "width": 360,
+      "height": 242,
+      "text": "# tags\n\n| column | type | constraints |\n|---|---|---|\n| 🔑 **id** | INTEGER |  |\n| name | TEXT | not null |\n| color | TEXT |  |\n",
+      "dmv": {
+        "kind": "table",
+        "table": {
+          "name": "tags",
+          "columns": [
+            {
+              "name": "id",
+              "type": "INTEGER",
+              "pk": true
+            },
+            {
+              "name": "name",
+              "type": "TEXT",
+              "notNull": true
+            },
+            {
+              "name": "color",
+              "type": "TEXT"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "users",
+      "type": "text",
+      "x": 440,
+      "y": 294,
+      "width": 360,
+      "height": 270,
+      "text": "# users\n\n| column | type | constraints |\n|---|---|---|\n| 🔑 **id** | INTEGER |  |\n| email | TEXT | not null |\n| display_name | TEXT | not null |\n| created_at | TEXT | not null, default `CURRENT_TIMESTAMP` |\n",
+      "dmv": {
+        "kind": "table",
+        "table": {
+          "name": "users",
+          "columns": [
+            {
+              "name": "id",
+              "type": "INTEGER",
+              "pk": true
+            },
+            {
+              "name": "email",
+              "type": "TEXT",
+              "notNull": true
+            },
+            {
+              "name": "display_name",
+              "type": "TEXT",
+              "notNull": true
+            },
+            {
+              "name": "created_at",
+              "type": "TEXT",
+              "notNull": true,
+              "default": "CURRENT_TIMESTAMP"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "comments.author_id->users.id",
+      "fromNode": "comments",
+      "toNode": "users",
+      "fromSide": "right",
+      "toSide": "left",
+      "label": "author_id → id",
+      "dmv": {
+        "kind": "fk",
+        "from": {
+          "table": "comments",
+          "column": "author_id"
+        },
+        "to": {
+          "table": "users",
+          "column": "id"
+        },
+        "relation": "many-to-one"
+      }
+    },
+    {
+      "id": "comments.post_id->posts.id",
+      "fromNode": "comments",
+      "toNode": "posts",
+      "fromSide": "right",
+      "toSide": "left",
+      "label": "post_id → id",
+      "dmv": {
+        "kind": "fk",
+        "from": {
+          "table": "comments",
+          "column": "post_id"
+        },
+        "to": {
+          "table": "posts",
+          "column": "id"
+        },
+        "relation": "many-to-one"
+      }
+    },
+    {
+      "id": "post_tags.tag_id->tags.id",
+      "fromNode": "post_tags",
+      "toNode": "tags",
+      "fromSide": "left",
+      "toSide": "right",
+      "label": "tag_id → id",
+      "dmv": {
+        "kind": "fk",
+        "from": {
+          "table": "post_tags",
+          "column": "tag_id"
+        },
+        "to": {
+          "table": "tags",
+          "column": "id"
+        },
+        "relation": "many-to-one"
+      }
+    },
+    {
+      "id": "post_tags.post_id->posts.id",
+      "fromNode": "post_tags",
+      "toNode": "posts",
+      "fromSide": "right",
+      "toSide": "left",
+      "label": "post_id → id",
+      "dmv": {
+        "kind": "fk",
+        "from": {
+          "table": "post_tags",
+          "column": "post_id"
+        },
+        "to": {
+          "table": "posts",
+          "column": "id"
+        },
+        "relation": "many-to-one"
+      }
+    },
+    {
+      "id": "posts.author_id->users.id",
+      "fromNode": "posts",
+      "toNode": "users",
+      "fromSide": "left",
+      "toSide": "right",
+      "label": "author_id → id",
+      "dmv": {
+        "kind": "fk",
+        "from": {
+          "table": "posts",
+          "column": "author_id"
+        },
+        "to": {
+          "table": "users",
+          "column": "id"
+        },
+        "relation": "many-to-one"
+      }
+    }
+  ]
+}

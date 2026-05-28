@@ -1,5 +1,59 @@
 # datamodelviz
 
+> Convert relational data models into Obsidian Canvas / JSON Canvas files. Phase 1 ships a SQLite-focused CLI.
+
+## Quickstart
+
+Requires Node 20+.
+
+```bash
+npm install
+npm run demo
+```
+
+That seeds a 5-table sample SQLite database (`examples/demo.sqlite`), runs the SQLite-to-canvas converter, and validates the output. Generates:
+
+- `examples/demo.dbml` — the canonical text representation (Claude can read and reason over this)
+- `examples/demo.canvas` — the visual artifact (drop into Obsidian or load in [Hesprs/JSON-Canvas-Viewer](https://github.com/Hesprs/JSON-Canvas-Viewer))
+
+### Open the demo in Obsidian
+
+1. Copy `examples/demo.canvas` into any folder inside an Obsidian vault.
+2. Click it. Obsidian opens it as a Canvas with 5 tables and 5 FK edges.
+
+### Open the demo in Hesprs's web viewer
+
+1. Clone [Hesprs/JSON-Canvas-Viewer](https://github.com/Hesprs/JSON-Canvas-Viewer) and follow their README to run the standalone build.
+2. Point it at `examples/demo.canvas`.
+3. Tables render as Markdown blocks (column tables); FK edges connect them.
+
+## CLI
+
+```bash
+# SQLite → .canvas (end-to-end)
+npx dmv sqlite-to-canvas path/to/db.sqlite -o out.canvas
+
+# SQLite → .dbml (intermediate)
+npx dmv sqlite-to-dbml path/to/db.sqlite -o out.dbml
+
+# .dbml → .canvas (works with any hand-authored DBML)
+npx dmv dbml-to-canvas schema.dbml -o schema.canvas
+```
+
+> npm note: this project uses `npm` rather than `pnpm` (the spec mentions pnpm, but `npm install -g pnpm` requires sudo on this machine). Switch to pnpm anytime.
+
+## Sample schema
+
+The seed script (`scripts/seed-demo.ts`) creates a tiny blog schema:
+
+- `users` — id, email (unique), display_name, created_at
+- `posts` — id, author_id → users.id, title, body, published_at, created_at
+- `tags` — id, name (unique), color
+- `post_tags` — composite-PK junction (post_id → posts.id, tag_id → tags.id)
+- `comments` — id, post_id → posts.id, author_id → users.id, body, created_at
+
+Five FK relationships, including a composite PK on the junction table — exercises the harder parts of the conversion.
+
 ## Spec
 
 - [Design doc](spec/design.md) — Phase 1 "fastest demo" architecture, tech stack, CLI surface, acceptance criteria, anti-scope checklist.

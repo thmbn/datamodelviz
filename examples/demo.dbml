@@ -1,0 +1,52 @@
+Table comments {
+  id INTEGER [pk]
+  post_id INTEGER [not null]
+  author_id INTEGER [not null]
+  body TEXT [not null]
+  created_at TEXT [not null, default: `CURRENT_TIMESTAMP`]
+
+  indexes {
+    (post_id)
+  }
+}
+
+Table post_tags {
+  post_id INTEGER [not null]
+  tag_id INTEGER [not null]
+
+  indexes {
+    (post_id, tag_id) [pk]
+  }
+}
+
+Table posts {
+  id INTEGER [pk]
+  author_id INTEGER [not null]
+  title TEXT [not null]
+  body TEXT
+  published_at TEXT
+  created_at TEXT [not null, default: `CURRENT_TIMESTAMP`]
+
+  indexes {
+    (author_id)
+  }
+}
+
+Table tags {
+  id INTEGER [pk]
+  name TEXT [not null]
+  color TEXT
+}
+
+Table users {
+  id INTEGER [pk]
+  email TEXT [not null]
+  display_name TEXT [not null]
+  created_at TEXT [not null, default: `CURRENT_TIMESTAMP`]
+}
+
+Ref: comments.author_id > users.id
+Ref: comments.post_id > posts.id
+Ref: post_tags.tag_id > tags.id
+Ref: post_tags.post_id > posts.id
+Ref: posts.author_id > users.id

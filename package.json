@@ -1,0 +1,26 @@
+{
+  "name": "datamodelviz",
+  "version": "0.1.0",
+  "description": "Convert relational data models into Obsidian Canvas / JSON Canvas files",
+  "bin": {
+    "dmv": "./dist/cli.js"
+  },
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "dmv": "tsx src/cli.ts",
+    "seed-demo": "tsx scripts/seed-demo.ts",
+    "demo": "npm run seed-demo && npm run dmv -- sqlite-to-canvas examples/demo.sqlite -o examples/demo.canvas && npm run dmv -- sqlite-to-dbml examples/demo.sqlite -o examples/demo.dbml && node scripts/validate.js examples/demo.canvas"
+  },
+  "dependencies": {
+    "@dbml/core": "^3.9.0",
+    "better-sqlite3": "^11.5.0",
+    "cac": "^6.7.14"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.11",
+    "@types/node": "^22.9.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.6.3"
+  }
+}
