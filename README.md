@@ -69,6 +69,7 @@ Background research lives in [`research/`](research/). Each file is a self-conta
 - [Declarative visualization libraries](research/declarative-viz-libraries.md) — broader text-DSL / spec-driven diagram tools (Mermaid, D2, PlantUML, mingrammer/diagrams, ECharts, Vega, WaveDrom, Kroki, …) — the neighbors of what datamodelviz does.
 - [Claude Code + Obsidian Canvas](research/claude-code-and-obsidian-canvas.md) — who's demonstrated `.canvas` iteration with Claude Code (creation: yes; iteration: gap), plus the top 20 canvas plugins and native object types a `.canvas` can hold.
 - [Quartz and Hesprs](research/quartz-and-hesprs.md) — deep dive on the two adjacent projects (Obsidian-to-website SSG and JSON Canvas web viewer); both shipped major versions in May 2026, both moved on canvas support in the same window. Quartz is the natural distribution channel; Hesprs is the natural extension surface.
+- [Agent surface: MCP, ACP, or CLI?](research/agent-surface-mcp-acp-cli.md) — what should datamodelviz invest in to be usable from Claude Code / Cursor / Cline / Aider / Zed? Verdict: CLI-only for now; add a thin MCP wrapper if/when a second user asks. ACP is for agent runtimes, not tool authors — irrelevant for us.
 
 ## DBML notes
 
