@@ -19,7 +19,9 @@ That seeds a 5-table sample SQLite database (`examples/demo.sqlite`), runs the S
 ### Open the demo in Obsidian
 
 1. Copy `examples/demo.canvas` into any folder inside an Obsidian vault.
-2. Click it. Obsidian opens it as a Canvas with 5 tables and 5 FK edges.
+2. Click it. Obsidian opens it as a Canvas with 5 tables and 5 FK edges:
+
+![Demo canvas rendered in Obsidian](examples/screenshot-obsidian-canvas-v1.png)
 
 ### Open the demo in Hesprs's web viewer
 
