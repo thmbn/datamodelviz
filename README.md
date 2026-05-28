@@ -50,3 +50,58 @@ Landscape of open-source relational data model visualization tools. The space ha
 |---|---|---|---|---|
 | [DBeaver](https://github.com/dbeaver/dbeaver) | ~50.3k | Apache-2.0 | Java | Universal SQL client; ERD is incidental but "free" for existing users |
 | [pgModeler](https://github.com/pgmodeler/pgmodeler) | ~3.6k | GPL-3.0 | C++/Qt | Only tool modeling every Postgres-specific feature |
+
+## DBML notes
+
+DBML's official tooling ([`@dbml/cli`](https://github.com/holistics/dbml) from holistics/dbml) is opinionated toward classic relational warehouses. Coverage across the four targets we care about is uneven — two are first-class, two are not.
+
+| DB | Official `db2dbml` | Best alternative |
+|---|---|---|
+| PostgreSQL | Yes | `db2dbml postgres` |
+| SQLite | No ([#14](https://github.com/holistics/dbml/issues/14) open since 2019) | community gist / SchemaCrawler |
+| DuckDB | No | `EXPORT DATABASE` + `sql2dbml --postgres` |
+| Cosmos DB | No | Custom JSON-schema inference; no off-the-shelf path |
+
+### PostgreSQL
+
+**Status:** First-class. Best-supported target in the ecosystem.
+
+```
+db2dbml postgres 'postgresql://user:pass@host:5432/dbname?schemas=public,other' -o out.dbml
+```
+
+`sql2dbml --postgres schema.sql` also works for offline DDL. See the [CLI docs](https://dbml.dbdiagram.io/cli).
+
+**Gotchas:** Custom `ENUM` types round-trip cleanly (DBML has native `Enum`). `DOMAIN` types, `CITEXT`, ranges, arrays, JSONB, and PostGIS geometries collapse to plain column-type strings — no semantic loss but no validation either. Partitioned tables show up as the parent only. Multi-schema dumps require the `?schemas=` query param or only `public` is exported.
+
+### SQLite
+
+**Status:** Not supported by `db2dbml`. Open feature request since 2019 ([issue #14](https://github.com/holistics/dbml/issues/14)), still labeled `help wanted` with no linked PRs. `sql2dbml` also does not accept a `--sqlite` dialect (only mysql/postgres/mssql/snowflake/oracle).
+
+**Workarounds:**
+- Community Python script: [promto-c gist](https://gist.github.com/promto-c/2c3ca92f49c2dcd5e30205a8c69d4a70) — reads `sqlite_master` and emits DBML with FKs. Single-file, unmaintained.
+- SchemaCrawler in Docker can dump from a SQLite file.
+
+**Gotchas:** SQLite's type affinity (anything goes into a `TEXT` column, declared types are advisory) means DBML output will faithfully reproduce whatever odd type names the DDL used (`VARCHAR2`, `DATETIME`, etc.). Foreign keys exist in the schema even if `PRAGMA foreign_keys=OFF` at runtime — converters should still find them via `PRAGMA foreign_key_list(table)`.
+
+### DuckDB
+
+**Status:** Not supported by `db2dbml`. No open issue, no community DuckDB→DBML converter found on GitHub.
+
+**Workarounds:**
+- [`duckerd`](https://github.com/tobilg/duckerd) (~150 stars) generates ER diagrams (svg/png/pdf) from `.duckdb` files but **does not emit DBML**.
+- Realistic path: `EXPORT DATABASE 'dir'` → take the generated `schema.sql` → run it through `sql2dbml --postgres` (DuckDB's DDL is largely Postgres-compatible). Expect to hand-edit.
+
+**Gotchas:** DuckDB's analytical types (`STRUCT`, `LIST`, `MAP`, `UNION`, `HUGEINT`, nested types) have no DBML equivalent and will need to be stringified or flattened. DuckDB has no real FK enforcement (FKs parse but aren't checked) so relationship recovery via `information_schema.referential_constraints` is unreliable — many DuckDB schemas have zero declared FKs.
+
+### Azure Cosmos DB
+
+**Status:** Not supported, and only marginally meaningful. No DBML converter exists for any Cosmos API (NoSQL, Mongo, Cassandra, Gremlin, Table).
+
+**Impedance mismatch:** DBML assumes tables, typed columns, and referential FKs. Cosmos for NoSQL stores schemaless JSON documents in containers partitioned by a path; "relationships" are denormalized embeds or app-enforced `id` references with no DB-side constraint. Hierarchical partition keys, TTL, and analytical store schema unioning have no DBML representation. The Cassandra and Gremlin APIs are even further from the relational model.
+
+**Workarounds (all DIY):**
+- Sample N documents per container, infer a JSON Schema (e.g. `genson`, `quicktype`), then hand-map each top-level container to a DBML `Table` and embedded objects to separate tables joined by synthetic `id`s. This is what [Hackolade](https://hackolade.com/help/CosmosDB.html) does commercially, but it doesn't emit DBML.
+- For the Mongo API specifically, point any Mongo→ERD inferencer at the connection string and convert from there.
+
+**Honest take:** generating DBML for Cosmos is a lossy editorial exercise, not a mechanical export. If the build decision hinges on Cosmos coverage, plan to write the inferencer yourself and treat DBML as documentation-only.
