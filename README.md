@@ -1,5 +1,10 @@
 # datamodelviz
 
+## Spec
+
+- [Design doc](spec/design.md) — Phase 1 "fastest demo" architecture, tech stack, CLI surface, acceptance criteria, anti-scope checklist.
+- [Canvas convention](spec/canvas-convention.md) — how relational tables are encoded into JSON Canvas `.canvas` files via a `dmv` extension that round-trips through Obsidian and Hesprs's viewer.
+
 ## Research
 
 Landscape of open-source relational data model visualization tools. The space has a clear modern leader (**DrawDB**, ~37k stars) but no monopoly — **ChartDB** went 0→22k in ~18 months. Three architectural patterns dominate: browser-based React/ReactFlow editors, CLI introspection tools that emit Markdown/Mermaid, and the DBML text-DSL ecosystem. AGPL-3.0 is the de facto license for the new wave of OSS-but-hosted editors.
