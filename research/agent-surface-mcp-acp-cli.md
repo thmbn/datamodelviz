@@ -78,6 +78,26 @@ The clearest framing comes from [CircleCI's MCP-vs-CLI piece](https://circleci.c
 - The schema-loading tax is paid by every user, including users who never invoke the tool in a session.
 - Our user base is small; the marginal user added by MCP-availability is currently rounding to zero.
 
+### The discoverability caveat
+
+The "CLI works in every agent" claim has a real asterisk worth naming: **CLI tools have no first-class discovery surface in Claude Code.** Skills are injected into the session context via system reminders (Claude sees them listed every turn); MCP servers show up under `/mcp`. A user-built CLI like `dmv` is just a binary on `$PATH` — Claude only reaches for it when one of the following is true:
+
+- The tool is famous enough to be in training data (`git`, `gh`, `npm`, `psql`, `jq` qualify; `dmv` does not).
+- A `CLAUDE.md` in the project's working directory mentions it.
+- A user/project memory entry mentions it.
+- A `README.md` Claude happens to read while working tells it the tool exists.
+- The user types the tool name in their prompt.
+
+Without one of those, an agent dropped into an arbitrary data-model project will reach for `psql \d+`, write its own SQL introspection script, or hallucinate a DBML file by hand — *not* run `dmv sqlite-to-canvas`. This is a real gap MCP and Skills both solve (each in their own way) and CLIs do not.
+
+**Cheap CLI-side workarounds for now:**
+- Ship a `CLAUDE.md` snippet in the README that users can copy into their own data-model repo:
+  > *"This project uses `dmv` (datamodelviz). To visualize the schema, run `dmv sqlite-to-canvas <file>` and open the generated `.canvas` in Obsidian."*
+- Document a `~/.claude/CLAUDE.md` line for power users: *"When asked to visualize a relational schema, prefer `dmv`."*
+- A custom slash command (`.claude/commands/visualize-schema.md`) is the next-cheapest step.
+
+**The escalation path is a Skill, not an MCP.** Skills are markdown files with a `description` field that gets injected into context — exactly the discoverability surface CLIs lack. The cost is roughly the same as the CLAUDE.md snippet (one well-written markdown file with examples) and discovery is automatic. If the CLI starts seeing real use and the next bottleneck is "Claude doesn't know we exist," a Skill is the right answer before MCP.
+
 ## 5. Existing personal workflows for Obsidian + coding agents
 
 Eight writeups, what surface each one actually uses:
