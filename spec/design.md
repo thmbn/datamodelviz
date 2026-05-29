@@ -166,3 +166,19 @@ The first concrete task (suggested order):
 10. Then loop in the three DB sources, one at a time, each with its own test.
 
 Do not write all four sources in parallel. Land DBML → canvas first, verify it visually, then add sources.
+
+## 11. Known follow-ons
+
+Small concerns surfaced during Phase 1 that didn't make the acceptance criteria but are worth tracking. Promote any of these to a real task when they start to bite.
+
+### 11.1 Publish to npm
+
+The only install path today is `git clone && npm install && npm link`. This is friction for both human users *and* the [bundled Claude Code skill](../skills/visualize-data-model/SKILL.md), which assumes `dmv` is on `$PATH`. A `npm publish` of `datamodelviz` (with the `bin` field already in `package.json`) reduces install to `npm install -g datamodelviz` and makes the skill work out of the box.
+
+Estimated effort: 10-15 minutes once the package name is claimed. Wait until the first external user actually asks — there's no point parking a name on npm before we have a v1 we're happy to put behind a version number.
+
+### 11.2 Skill ↔ source-support drift
+
+[`skills/visualize-data-model/SKILL.md`](../skills/visualize-data-model/SKILL.md) bakes in Phase 1 capabilities: SQLite end-to-end, DBML as input, and Postgres/DuckDB/Cosmos documented as **workarounds** (e.g. "for Postgres, use `pg_dump | sql2dbml`"). When Phase 2 adds Postgres or DuckDB as first-class sources (per §7), the skill body must be updated in the same PR — otherwise Claude will keep telling users about a workaround that no longer applies.
+
+Mitigation: add a checklist item to the Phase 2 PR template ("Did you update `skills/visualize-data-model/SKILL.md`?"). Until that template exists, this note serves the same purpose.
