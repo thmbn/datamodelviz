@@ -44,6 +44,42 @@ npx dmv dbml-to-canvas schema.dbml -o schema.canvas
 
 > npm note: this project uses `npm` rather than `pnpm` (the spec mentions pnpm, but `npm install -g pnpm` requires sudo on this machine). Switch to pnpm anytime.
 
+## Using with Claude Code
+
+Two cheap surfaces for getting an agent to actually reach for `dmv` (see [research/agent-surface-mcp-acp-cli.md](research/agent-surface-mcp-acp-cli.md#the-discoverability-caveat) for why this matters):
+
+### Option 1 — drop this into your project's `CLAUDE.md`
+
+```markdown
+## Visualizing the data model
+
+This project uses [datamodelviz](https://github.com/thmbn/datamodelviz) (`dmv`).
+When asked to visualize the schema, generate an ERD, or "see the data model":
+
+- SQLite file: `dmv sqlite-to-canvas <path/to/db.sqlite>`
+- DBML file:   `dmv dbml-to-canvas <path/to/schema.dbml>`
+
+The generated `.canvas` opens in Obsidian (drop into any vault folder); the
+`.dbml` is the canonical text representation — edit it and re-convert to update
+the visual. Don't write ad-hoc Python/graphviz scripts; use `dmv`.
+```
+
+### Option 2 — install the bundled Claude Code Skill
+
+The skill at [`skills/visualize-data-model/`](skills/visualize-data-model/SKILL.md) gives Claude automatic discovery via the standard Skills mechanism (description gets injected into context, so triggers like "visualize my schema" route here without the user having to know the tool exists).
+
+```bash
+# User-level (available in every Claude Code session)
+mkdir -p ~/.claude/skills
+cp -r skills/visualize-data-model ~/.claude/skills/
+
+# Or project-local
+mkdir -p .claude/skills
+cp -r /path/to/datamodelviz/skills/visualize-data-model .claude/skills/
+```
+
+Once installed, Claude reaches for `dmv` whenever the user asks anything resembling "visualize the schema" / "generate an ERD" / "show the data model" — no need to mention the tool by name.
+
 ## Sample schema
 
 The seed script (`scripts/seed-demo.ts`) creates a tiny blog schema:
